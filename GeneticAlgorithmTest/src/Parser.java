@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 
 public class Parser {
 	double x = 0, y = 0;
+	static DecimalFormat df = new DecimalFormat("####.####;-####.####");
 	public Parser(double xin, Double yin){
 		x = xin;
 		y = yin;
@@ -74,16 +75,16 @@ public class Parser {
 
 	public int fitness(Node root, double[][] ans){
 		int result = 0;//how many tests it fails...
-		double evaluation;
-		BigDecimal ansTemp;
-		BigDecimal evalTemp;
+		//double evaluation;
+		double ansTemp;
+		double evalTemp;
 		for(int index = 0; index < ans.length; index++){
 			x = (double)(ans[index][0]);
 			y = 0.0;//(double)(answerArray[index][1]);
 			//evaluation = Eval(root);
-			evalTemp = truncateDecimal(Eval(root), 2);
-			ansTemp = truncateDecimal(ans[index][1], 2);
-			if(evalTemp.doubleValue() == ansTemp.doubleValue())
+			evalTemp = Double.valueOf(df.format(Eval(root)));
+			ansTemp = Double.valueOf(df.format(ans[index][1]));
+			if(evalTemp == ansTemp)
 				result++;
 			else
 				result--;

@@ -12,22 +12,27 @@ public class main {
 	static Tree[] treeArray = new Tree[10000];
 	static Tree[] eliteTrees = null;
 	static Tree Fittest = null;
-	static int treeDepth = 10;
+	static int treeDepth = 5;
 	static int fitness = Integer.MIN_VALUE;
 	static int genLim = 1000;
 	static Random rand = new Random();
 	//static double[][] ans = {{-2, 4},{-1, 1},{0, 0},{1, 1},{2, 4}};// x^2
 	//static double[][] ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
-	static double[][] ans = { { -2, -16 }, { -1, -1 }, { 0, 0 }, { 1, 1 }, { 2, 16 } };// x^4
+	//static double[][] ans = { { -2, 16 }, { -1, 1 }, { 0, 0 }, { 1, 1 }, { 2, 16 } };// x^4
 
 	//static double[][] ans = {{-2, 0},{-1, -1},{0, 0},{1, 3},{2, 8}};//x^2+2x
-	// double[][] ans = {{-2.0, -0.9092974},{-1.0, -0.8414709},{0.0, 0.0},{1.0,
-	// 0.8414709},{2.0, 0.9092974}};//sin(x)
+	 //static double[][] ans = {{-2.0, -0.9092974},{-1.0, -0.8414709},{0.0, 0.0},{1.0, 0.8414709},{2.0, 0.9092974}};//sin(x)
 	// double[][] ans = {{-2.0, -0.4161468},{-1.0, 0.5403023},{0.0, 1.0},{1.0,
 	// 0.5403023},{2.0, -0.4161468}};//cos(x)
-	//static double[][] ans = {{-3, -9.99},{-2, -6.416},{-1, -2.46},{0, 1},{1, 3.5403},{2, 5.5839}, {3,8.01}};// cos x + 3x/2x
+	//static double[][] ans = {{-3, 0.010007503399554585},{-2, 0.5838531634528576},{-1, 1.5403023058681398},{0, 2.0},{1, 1.5403023058681398},{2, 0.5838531634528576},{3, 0.010007503399554585}};// cos x + 3x/2x
+	//static double[][] ans = {{-4, 95.34635637913638},{-3, 53.01000750339956},{-2, 23.583853163452858},{-1, 6.54030230586814},{0, 1.0},{1, 6.54030230586814},{2, 23.583853163452858},{3, 53.01000750339956},{4, 95.34635637913638}};//cos x + 3x*2x
+	static double [][] ans = {{-4, 96},{-3, 54},{-2, 24},{-1, 6},{0, 0},{1, 6},{2, 24},{3, 54},{4, 96}};//3x*2x
 	// int[][] ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	public static void main(String[] args) {
+		for(int i = -4; i <= 4; i++)
+			System.out.println("{" + i + ", " + (((3*(i))*(2*(i)))) + "},");
+				//System.out.println("cos x + 3x*2x. i: " + i + "; {" + i + ", " + (Math.cos(i)+((3*(i))*(2*(i)))) + "},");
+			
 		//Generate Random set of Trees
 		genRandomTrees(treeArray);
 //		for(int index = 0; index < treeArray.length; index++){
@@ -163,7 +168,7 @@ public class main {
 				int rm = rand.nextInt(treeArray.length);
 				treeArray[rm] = GeneticOperations.mutation(treeArray[rm], rand.nextInt(treeDepth) + 2);
 				treeArray[rm].fitness = p.fitness(treeArray[rm].root, ans);
-				//System.out.println("This is the Mutation: Fitness: " + treeArray[rm].fitness + " This is the program: " + printTree(treeArray[rm]));
+				System.out.println("This is the Mutation: Fitness: " + treeArray[rm].fitness + " This is the program: " + printTree(treeArray[rm]));
 			}
 		}
 
