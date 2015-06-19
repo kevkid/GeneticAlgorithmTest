@@ -11,42 +11,47 @@ public class main {
 	static int width, height;
 	static Tree[] treeArray = new Tree[10000];
 	static Tree[] eliteTrees = null;
+	static Tree[] mutatedTrees = null;
+	static Tree[] immigrateTrees = null;
+	static Tree[] nextGenTrees = null;
 	static Tree Fittest = null;
 	static int treeDepth = 5;
 	static int fitness = Integer.MIN_VALUE;
 	static int genLim = 1000;
 	static Random rand = new Random();
-	//static double[][] ans = {{-2, 4},{-1, 1},{0, 0},{1, 1},{2, 4}};// x^2
-	//static double[][] ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
-	//static double[][] ans = { { -2, 16 }, { -1, 1 }, { 0, 0 }, { 1, 1 }, { 2, 16 } };// x^4
+	static double[][] ans = {{-4, 96},{-3, 54},{-2, 24},{-1, 6},{0, 0},{1, 6},{2, 24},{3, 54},{4, 96}};
+	//ans = {{-2, 4},{-1, 1},{0, 0},{1, 1},{2, 4}};// x^2
+	//ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
+	//ans = { { -2, 16 }, { -1, 1 }, { 0, 0 }, { 1, 1 }, { 2, 16 } };// x^4
 
-	//static double[][] ans = {{-2, 0},{-1, -1},{0, 0},{1, 3},{2, 8}};//x^2+2x
-	 //static double[][] ans = {{-2.0, -0.9092974},{-1.0, -0.8414709},{0.0, 0.0},{1.0, 0.8414709},{2.0, 0.9092974}};//sin(x)
-	// double[][] ans = {{-2.0, -0.4161468},{-1.0, 0.5403023},{0.0, 1.0},{1.0,
-	// 0.5403023},{2.0, -0.4161468}};//cos(x)
-	//static double[][] ans = {{-3, 0.010007503399554585},{-2, 0.5838531634528576},{-1, 1.5403023058681398},{0, 2.0},{1, 1.5403023058681398},{2, 0.5838531634528576},{3, 0.010007503399554585}};// cos x + 3x/2x
-	//static double[][] ans = {{-4, 95.34635637913638},{-3, 53.01000750339956},{-2, 23.583853163452858},{-1, 6.54030230586814},{0, 1.0},{1, 6.54030230586814},{2, 23.583853163452858},{3, 53.01000750339956},{4, 95.34635637913638}};//cos x + 3x*2x
-	static double [][] ans = {{-4, 96},{-3, 54},{-2, 24},{-1, 6},{0, 0},{1, 6},{2, 24},{3, 54},{4, 96}};//3x*2x
+	//ans = {{-2, 0},{-1, -1},{0, 0},{1, 3},{2, 8}};//x^2+2x
+	 //ans = {{-2.0, -0.9092974},{-1.0, -0.8414709},{0.0, 0.0},{1.0, 0.8414709},{2.0, 0.9092974}};//sin(x)
+	// ans = {{-2.0, -0.4161468},{-1.0, 0.5403023},{0.0, 1.0},{1.0, 0.5403023},{2.0, -0.4161468}};//cos(x)
+	//ans = {{-3, 0.010007503399554585},{-2, 0.5838531634528576},{-1, 1.5403023058681398},{0, 2.0},{1, 1.5403023058681398},{2, 0.5838531634528576},{3, 0.010007503399554585}};// cos x + 3x/2x
+	//ans = {{-4, 95.34635637913638},{-3, 53.01000750339956},{-2, 23.583853163452858},{-1, 6.54030230586814},{0, 1.0},{1, 6.54030230586814},{2, 23.583853163452858},{3, 53.01000750339956},{4, 95.34635637913638}};//cos x + 3x*2x
+	//ans = {{-4, 96},{-3, 54},{-2, 24},{-1, 6},{0, 0},{1, 6},{2, 24},{3, 54},{4, 96}};//3x*2x
 	// int[][] ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	public static void main(String[] args) {
 		for(int i = -4; i <= 4; i++)
 			System.out.println("{" + i + ", " + (((3*(i))*(2*(i)))) + "},");
-				//System.out.println("cos x + 3x*2x. i: " + i + "; {" + i + ", " + (Math.cos(i)+((3*(i))*(2*(i)))) + "},");
 			
 		//Generate Random set of Trees
 		genRandomTrees(treeArray);
-//		for(int index = 0; index < treeArray.length; index++){
-//			System.out.println("This is the best fitness: " + treeArray[index].fitness + " This is the program: " + printTree(treeArray[index]) 
-//					+ " number of children: " + treeArray[index].numberOfChildren);		//get fitness
-//		}
+
 		treeArray = getFitness(treeArray, ans);
 		//get elite trees
 		eliteTrees = getElite(treeArray, ans.length);
+		//get mutations
+		mutatedTrees = mutate(eliteTrees);
+		//get immigrants
+		immigrateTrees = immigrate(eliteTrees);//probably can just be an number
+		//create next generation to crossover
+		nextGenTrees = nextGen(eliteTrees, mutatedTrees, immigrateTrees);
 		//crossover
 		int generation = 2;
 		outerLoop:
 		while(fitness < ans.length && generation < genLim){
-			crossover(eliteTrees);
+			crossover(nextGenTrees);
 			//calculate fitness and get elite trees
 			treeArray = getFitness(treeArray, ans);//set fitnesses for trees
 			for(int index = 0; index < treeArray.length; index++){
@@ -58,6 +63,12 @@ public class main {
 						+ " Generation: " + generation + " number of children: " + treeArray[index].numberOfChildren);
 			}
 			eliteTrees = getElite(treeArray, ans.length);//get elite trees
+			mutatedTrees = mutate(eliteTrees);//get immigrants
+			
+			immigrateTrees = immigrate(eliteTrees);//probably can just be an number
+			
+			nextGenTrees = nextGen(eliteTrees, mutatedTrees, immigrateTrees);//create next generation to crossover
+			//Should go through mutation process and immigration process
 			System.out.println(generation);
 			generation++;
 		}
@@ -115,24 +126,7 @@ public class main {
 					if(countIndex >= leet.length)
 						break outerLoop;
 					leet[countIndex] = input[index];
-					countIndex++;
-//					if(countIndex >= leet.length)
-//						break outerLoop;
-//					//areTreesDistinct(leet[leetIndex].root,input[index].root);
-//					int leetIndex = 0;
-//					boolean isDistinct = true;
-//					for(leetIndex = 0; leetIndex < leet.length; leetIndex++){//go through each leet tree
-//						if(leet[leetIndex] != null)
-//							if(!(isDistinct = areTreesDistinct(leet[leetIndex].root,input[index].root))){
-//								break;
-//							}
-//							
-//					}
-//					if(isDistinct){
-//					leet[countIndex] = input[index];
-//					countIndex++;
-//					}
-					
+					countIndex++;					
 				}
 			}
 			fitnessLevel--;
@@ -144,8 +138,7 @@ public class main {
 		int r1, r2;
 		Tree[] CrossOverResult = null;
 		Parser p = new Parser(0.0, 0.0);
-		for (int index = 0; index < treeArray.length - 1; index = index + 2) {// random
-																	// mating
+		for (int index = 0; index < treeArray.length - 1; index = index + 2) {
 			r1 = rand.nextInt(elites.length);
 			r2 = rand.nextInt(elites.length);
 			while(r2 == r1){
@@ -163,13 +156,6 @@ public class main {
 				}
 			treeArray[index] = CrossOverResult[0];
 			treeArray[index + 1] = CrossOverResult[1];
-			if (rand.nextDouble() <= 0.010) {// one percent get mutated
-				//System.out.println("Mutating");
-				int rm = rand.nextInt(treeArray.length);
-				treeArray[rm] = GeneticOperations.mutation(treeArray[rm], rand.nextInt(treeDepth) + 2);
-				treeArray[rm].fitness = p.fitness(treeArray[rm].root, ans);
-				System.out.println("This is the Mutation: Fitness: " + treeArray[rm].fitness + " This is the program: " + printTree(treeArray[rm]));
-			}
 		}
 
 	}
@@ -188,6 +174,40 @@ public class main {
 			return true;
 		return result;			
 		}
+	
+	private static Tree[] mutate(Tree[] treeArray){
+		Tree[] Mutated = treeArray.clone();
+		Parser p = new Parser(0.0, 0.0);
+		for (int index = 0; index < Mutated.length; index++) {//mutate each of the elites
+			if (rand.nextDouble() <= 1.010) {// 100% get mutated
+				Mutated[index] = GeneticOperations.mutation(Mutated[index], rand.nextInt(treeDepth) + 2);
+				Mutated[index].fitness = p.fitness(Mutated[index].root, ans);
+			System.out.println("This is the Mutation: Fitness: " + Mutated[index].fitness + " This is the program: " + printTree(Mutated[index]));
+			}
+		}
+		return Mutated;
+		
+	}
+	private static Tree[] immigrate(Tree[] treeArray){
+		Tree[] immigrated = new Tree[treeArray.length];
+		for (int index = 0; index < immigrated.length; index++) {
+			immigrated[index] = new Tree(treeDepth);//generate random trees
+		}
+		return immigrated;
+	}
+	private static Tree[] nextGen(Tree[] elite, Tree[] mutated,Tree[] immigrants){
+		ArrayList<Tree> nextGen = new ArrayList<Tree>();
+		for (Tree tree : elite) {
+			nextGen.add(tree);
+		}
+		for (Tree tree : mutated) {
+			nextGen.add(tree);
+		}
+		for (Tree tree : immigrants) {
+			nextGen.add(tree);
+		}
+		return nextGen.toArray(new Tree[nextGen.size()]);
+	}
 	
 }
 
