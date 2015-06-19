@@ -20,7 +20,7 @@ public class main {
 	static int fitness = Integer.MIN_VALUE;
 	static int genLim = 1000;
 	static Random rand = new Random();
-	static double[][] ans = {{-4, 95.34635637913638},{-3, 53.01000750339956},{-2, 23.583853163452858},{-1, 6.54030230586814},{0, 1.0},{1, 6.54030230586814},{2, 23.583853163452858},{3, 53.01000750339956},{4, 95.34635637913638}};//cos x + 3x*2x
+	static double[][] ans = {{-4, 1048576.0}, {-3, 59049.0}, {-2, 1024.0}, {-1, 1.0}, {0, 0.0}, {1, 1.0}, {2, 1024.0}, {3, 59049.0}, {4, 1048576.0}};//x^10
 	//ans = {{-2, 4},{-1, 1},{0, 0},{1, 1},{2, 4}};// x^2
 	//ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	//ans = { { -2, 16 }, { -1, 1 }, { 0, 0 }, { 1, 1 }, { 2, 16 } };// x^4
@@ -34,7 +34,7 @@ public class main {
 	// int[][] ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	public static void main(String[] args) {
 		for(int i = -4; i <= 4; i++)
-			System.out.println("{" + i + ", " + (((3*(i))*(2*(i)))) + "},");
+			System.out.println("{" + i + ", " + Math.pow(i,10) + "},");
 		long startTime = System.currentTimeMillis();
 		//Generate Random set of Trees
 		genRandomTrees(treeArray);
@@ -74,14 +74,15 @@ public class main {
 		}
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
-		long minutes = TimeUnit.MILLISECONDS.toMinutes(totalTime);
-		System.out.println(minutes);
+		long sec = TimeUnit.MILLISECONDS.toSeconds(totalTime);
+		System.out.println("Number of seconds: " + sec);
 		
-		ui u1 = new ui();
-		u1.setVisible(true);
-		if(Fittest.root != null){
-		u1.drawTree(Fittest.root, new Parser(0.0, 0.0));
-		System.out.println("This is the best Tree: " + printTree(Fittest) + "it has fitness of: " + Fittest.fitness);	
+		
+		if(Fittest != null){
+			ui u1 = new ui();
+			u1.setVisible(true);
+			u1.drawTree(Fittest.root, new Parser(0.0, 0.0));
+			System.out.println("This is the best Tree: " + printTree(Fittest) + "it has fitness of: " + Fittest.fitness);	
 		}
 		else{
 			System.out.println("No Fittest");
