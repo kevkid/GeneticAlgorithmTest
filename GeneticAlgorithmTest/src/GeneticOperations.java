@@ -126,7 +126,7 @@ public class GeneticOperations {
 				
 		}
 	}
-	private static Node copyTree(Node root){
+	public static Node copyTree(Node root){
 		Node result = new Node();
 		result.data = root.data;
 		result.leaf = root.leaf;

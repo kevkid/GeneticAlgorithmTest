@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
+import java.util.concurrent.TimeUnit;
 
 
 
@@ -15,11 +16,11 @@ public class main {
 	static Tree[] immigrateTrees = null;
 	static Tree[] nextGenTrees = null;
 	static Tree Fittest = null;
-	static int treeDepth = 5;
+	static int treeDepth = 10;
 	static int fitness = Integer.MIN_VALUE;
 	static int genLim = 1000;
 	static Random rand = new Random();
-	static double[][] ans = {{-4, 96},{-3, 54},{-2, 24},{-1, 6},{0, 0},{1, 6},{2, 24},{3, 54},{4, 96}};
+	static double[][] ans = {{-4, 95.34635637913638},{-3, 53.01000750339956},{-2, 23.583853163452858},{-1, 6.54030230586814},{0, 1.0},{1, 6.54030230586814},{2, 23.583853163452858},{3, 53.01000750339956},{4, 95.34635637913638}};//cos x + 3x*2x
 	//ans = {{-2, 4},{-1, 1},{0, 0},{1, 1},{2, 4}};// x^2
 	//ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	//ans = { { -2, 16 }, { -1, 1 }, { 0, 0 }, { 1, 1 }, { 2, 16 } };// x^4
@@ -34,7 +35,7 @@ public class main {
 	public static void main(String[] args) {
 		for(int i = -4; i <= 4; i++)
 			System.out.println("{" + i + ", " + (((3*(i))*(2*(i)))) + "},");
-			
+		long startTime = System.currentTimeMillis();
 		//Generate Random set of Trees
 		genRandomTrees(treeArray);
 
@@ -50,17 +51,16 @@ public class main {
 		//crossover
 		int generation = 2;
 		outerLoop:
-		while(fitness < ans.length && generation < genLim){
+		while(generation < genLim){
 			crossover(nextGenTrees);
 			//calculate fitness and get elite trees
 			treeArray = getFitness(treeArray, ans);//set fitnesses for trees
 			for(int index = 0; index < treeArray.length; index++){
+				//System.out.println("This is the best fitness: " + treeArray[index].fitness + " This is the program: " + printTree(treeArray[index]) + " Generation: " + generation + " number of children: " + treeArray[index].numberOfChildren);
 				if(treeArray[index].fitness == ans.length){
 					Fittest = treeArray[index];
 					break outerLoop;
 				}
-				System.out.println("This is the best fitness: " + treeArray[index].fitness + " This is the program: " + printTree(treeArray[index]) 
-						+ " Generation: " + generation + " number of children: " + treeArray[index].numberOfChildren);
 			}
 			eliteTrees = getElite(treeArray, ans.length);//get elite trees
 			mutatedTrees = mutate(eliteTrees);//get immigrants
@@ -69,29 +69,25 @@ public class main {
 			
 			nextGenTrees = nextGen(eliteTrees, mutatedTrees, immigrateTrees);//create next generation to crossover
 			//Should go through mutation process and immigration process
-			System.out.println(generation);
+			System.out.println("Generation: " + generation);
 			generation++;
 		}
-		
+		long endTime   = System.currentTimeMillis();
+		long totalTime = endTime - startTime;
+		long minutes = TimeUnit.MILLISECONDS.toMinutes(totalTime);
+		System.out.println(minutes);
 		
 		ui u1 = new ui();
 		u1.setVisible(true);
+		if(Fittest.root != null){
 		u1.drawTree(Fittest.root, new Parser(0.0, 0.0));
-		System.out.println("This is the best Tree: " + printTree(Fittest) + "it has fitness of: " + Fittest.fitness);
+		System.out.println("This is the best Tree: " + printTree(Fittest) + "it has fitness of: " + Fittest.fitness);	
+		}
+		else{
+			System.out.println("No Fittest");
+		}
+		
 
-		
-			
-			
-		
-		// TODO Auto-generated method stub
-		//String input = JOptionPane.showInputDialog("Give me an expression, use spaces");
-		//System.out.println(input);
-		//String[] inpArray = input.split(" ");
-		//t = new Tree();
-		//Node root = t.build(inpArray);
-		//root = t.build(10);
-		
-		//System.out.println("done: " + Parser.Eval(root));
 	}
 	private static void genRandomTrees(Tree[] input){
 		for(int index = 0; index < input.length; index++){
@@ -131,6 +127,7 @@ public class main {
 			}
 			fitnessLevel--;
 		}
+		System.out.println("This is the best fitness: " + leet[0].fitness + " This is the program: " + printTree(leet[0]) + " number of children: " + leet[0].numberOfChildren);
 		return leet;
 	}
 
@@ -138,11 +135,23 @@ public class main {
 		int r1, r2;
 		Tree[] CrossOverResult = null;
 		Parser p = new Parser(0.0, 0.0);
-		for (int index = 0; index < treeArray.length - 1; index = index + 2) {
+		for(int index = 0; index < eliteTrees.length; index++){//Our surviors
+			treeArray[index] = eliteTrees[index];
+		}
+		for (int index = eliteTrees.length; index < treeArray.length - 1; index = index + 2) {
 			r1 = rand.nextInt(elites.length);
 			r2 = rand.nextInt(elites.length);
+			if(r1 < eliteTrees.length){
+				r1 += eliteTrees.length;
+			}
+			if(r2 < eliteTrees.length){
+				r2 += eliteTrees.length;
+			}
 			while(r2 == r1){
 				r2 = rand.nextInt(elites.length);
+				if(r2 < eliteTrees.length){
+					r2 += eliteTrees.length;
+				}
 			}
 
 			CrossOverResult = GeneticOperations.crossOver(elites[r1], elites[r2]);
@@ -176,13 +185,16 @@ public class main {
 		}
 	
 	private static Tree[] mutate(Tree[] treeArray){
-		Tree[] Mutated = treeArray.clone();
+		Tree[] Mutated = new Tree[treeArray.length];
+		for(int index = 0; index < treeArray.length; index++){
+			Mutated[index] = new Tree(GeneticOperations.copyTree(treeArray[index].root));
+		}
 		Parser p = new Parser(0.0, 0.0);
 		for (int index = 0; index < Mutated.length; index++) {//mutate each of the elites
 			if (rand.nextDouble() <= 1.010) {// 100% get mutated
 				Mutated[index] = GeneticOperations.mutation(Mutated[index], rand.nextInt(treeDepth) + 2);
 				Mutated[index].fitness = p.fitness(Mutated[index].root, ans);
-			System.out.println("This is the Mutation: Fitness: " + Mutated[index].fitness + " This is the program: " + printTree(Mutated[index]));
+			//System.out.println("This is the Mutation: Fitness: " + Mutated[index].fitness + " This is the program: " + printTree(Mutated[index]));
 			}
 		}
 		return Mutated;
@@ -192,6 +204,7 @@ public class main {
 		Tree[] immigrated = new Tree[treeArray.length];
 		for (int index = 0; index < immigrated.length; index++) {
 			immigrated[index] = new Tree(treeDepth);//generate random trees
+			immigrated[index].fitness = new Parser(0.0, 0.0).fitness(immigrated[index].root, ans);
 		}
 		return immigrated;
 	}
