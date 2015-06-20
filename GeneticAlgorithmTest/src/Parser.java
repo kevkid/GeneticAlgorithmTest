@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 
 public class Parser {
 	double x = 0, y = 0;
-	static DecimalFormat df = new DecimalFormat("####.#######;-####.#######");
+	static DecimalFormat df = new DecimalFormat("####.######;-####.######");
 	public Parser(double xin, Double yin){
 		x = xin;
 		y = yin;
