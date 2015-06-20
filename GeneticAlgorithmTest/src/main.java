@@ -168,7 +168,7 @@ public class main {
 			treeArray[index + 1] = CrossOverResult[1];
 		}
 
-	}
+	}//
 	
 	private static boolean areTreesDistinct(Node t1, Node t2){
 		boolean result = false;
