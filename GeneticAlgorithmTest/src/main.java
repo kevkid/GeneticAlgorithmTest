@@ -37,7 +37,7 @@ public class main {
 			System.out.println("{" + i + ", " + Math.pow(i,10) + "},");
 		long startTime = System.currentTimeMillis();
 		//Generate Random set of Trees
-		genRandomTrees(treeArray);
+		genRandomTrees(treeArray);//
 
 		treeArray = getFitness(treeArray, ans);
 		//get elite trees
