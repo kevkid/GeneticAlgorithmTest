@@ -8,7 +8,7 @@ public class Tree {
 	String[] var = {"x", "y"};
 	int maxDepth;
 	int numberOfChildren;
-	int fitness;
+	double fitness;
 	
 	Node root;
 	public Tree(int depth){//build tree when instantiating;

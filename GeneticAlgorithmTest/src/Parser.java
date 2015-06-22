@@ -73,8 +73,8 @@ public class Parser {
 	}
 
 
-	public int fitness(Node root, double[][] ans){
-		int result = 0;//how many tests it fails...
+	public double fitness(Node root, double[][] ans){
+		double result = 0;//how many tests it fails...
 		//double evaluation;
 		double ansTemp;
 		double evalTemp;
@@ -84,10 +84,7 @@ public class Parser {
 			//evaluation = Eval(root);
 			evalTemp = Double.valueOf(df.format(Eval(root)));
 			ansTemp = Double.valueOf(df.format(ans[index][1]));
-			if(evalTemp == ansTemp)
-				result++;
-			else
-				result--;
+			result += evalTemp-ansTemp;//perfect score should be a difference of 0
 		}
 		
 		return result;

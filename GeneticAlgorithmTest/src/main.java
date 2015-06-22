@@ -17,10 +17,10 @@ public class main {
 	static Tree[] nextGenTrees = null;
 	static Tree Fittest = null;
 	static int treeDepth = 10;
-	static int fitness = Integer.MIN_VALUE;
+	static double fitness = 0.0;
 	static int genLim = 1000;
 	static Random rand = new Random();
-	static double[][] ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
+	static double[][] ans = {{-4, 96},{-3, 54},{-2, 24},{-1, 6},{0, 0},{1, 6},{2, 24},{3, 54},{4, 96}};//3x*2x
 	//ans = {{-2, 4},{-1, 1},{0, 0},{1, 1},{2, 4}};// x^2
 	//ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	//ans = { { -2, 16 }, { -1, 1 }, { 0, 0 }, { 1, 1 }, { 2, 16 } };// x^4
@@ -41,7 +41,7 @@ public class main {
 
 		treeArray = getFitness(treeArray, ans);
 		//get elite trees
-		eliteTrees = getElite(treeArray, ans.length);
+		eliteTrees = getElite(treeArray, fitness);
 		//get mutations
 		mutatedTrees = mutate(eliteTrees);
 		//get immigrants
@@ -57,12 +57,12 @@ public class main {
 			treeArray = getFitness(treeArray, ans);//set fitnesses for trees
 			for(int index = 0; index < treeArray.length; index++){
 				//System.out.println("This is the best fitness: " + treeArray[index].fitness + " This is the program: " + printTree(treeArray[index]) + " Generation: " + generation + " number of children: " + treeArray[index].numberOfChildren);
-				if(treeArray[index].fitness == ans.length){
+				if(treeArray[index].fitness == fitness){
 					Fittest = treeArray[index];
 					break outerLoop;
 				}
 			}
-			eliteTrees = getElite(treeArray, ans.length);//get elite trees
+			eliteTrees = getElite(treeArray, fitness);//get elite trees
 			mutatedTrees = mutate(eliteTrees);//get immigrants
 			
 			immigrateTrees = immigrate(eliteTrees);//probably can just be an number
@@ -112,22 +112,27 @@ public class main {
 		}
 		return input;
 	}
-	private static Tree[] getElite(Tree[] input, int fitnessLevel){
+	private static Tree[] getElite(Tree[] input, double fitnessLevel){
 		Tree[] leet = new Tree[input.length/10];
-
+		double lowestDistance = Math.abs(input[0].fitness - 0);
+		double distance;
+		int closestIndex = 0;
 		int countIndex = 0;//get smallest number
 		outerLoop:
-		while(fitnessLevel >= (-1*ans.length)){//while the fitness level is > -5
+		while(countIndex < leet.length){//while the leet array hasnt filled up
 			for(int index = 0; index < input.length; index++){
-				if(fitnessLevel == input[index].fitness){//check each tree for their fitness
-					if(countIndex >= leet.length)
-						break outerLoop;
-					leet[countIndex] = input[index];
-					countIndex++;					
+				distance = Math.abs(input[index].fitness - 0) ;
+				if(distance < lowestDistance){//check each tree for their fitness
+					lowestDistance = distance;
+					closestIndex = index;		
 				}
 			}
-			fitnessLevel--;
+			leet[countIndex] = input[closestIndex];
+			leet[countIndex].fitness = input[countIndex].fitness;
+			input[closestIndex].fitness = Double.MIN_VALUE;
+			countIndex++;	
 		}
+		leet[0].fitness = new Parser(0.0, 0.0).Eval(leet[0].root);
 		System.out.println("This is the best fitness: " + leet[0].fitness + " This is the program: " + printTree(leet[0]) + " number of children: " + leet[0].numberOfChildren);
 		return leet;
 	}
