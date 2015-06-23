@@ -20,7 +20,7 @@ public class main {
 	static double fitness = 0.0;
 	static int genLim = 1000;
 	static Random rand = new Random();
-	static double[][] ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
+	static double[][] ans = {{-4, 17.0},{-3, 10.0},{-2, 5.0},{-1, 2.0},{0, 1.0},{1, 2.0},{2, 5.0},{3, 10.0},{4, 17.0}};//x^2+1
 	//ans = {{-2, 4},{-1, 1},{0, 0},{1, 1},{2, 4}};// x^2
 	//ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	//ans = { { -2, 16 }, { -1, 1 }, { 0, 0 }, { 1, 1 }, { 2, 16 } };// x^4
@@ -34,7 +34,7 @@ public class main {
 	// int[][] ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	public static void main(String[] args) {
 		for(int i = -4; i <= 4; i++)
-			System.out.println("{" + i + ", " + Math.pow(i,10) + "},");
+			System.out.println("{" + i + ", " + (Math.pow(i,2)+1) + "},");
 		long startTime = System.currentTimeMillis();
 		//Generate Random set of Trees
 		genRandomTrees(treeArray);//
@@ -58,7 +58,7 @@ public class main {
 			for(int index = 0; index < treeArray.length; index++){
 				//System.out.println("This is the best fitness: " + treeArray[index].fitness + " This is the program: " + printTree(treeArray[index]) + " Generation: " + generation + " number of children: " + treeArray[index].numberOfChildren);
 				if(treeArray[index].fitness == fitness){
-					System.out.println(new Parser(0.0, 0.0).fitness(treeArray[index].root, ans));
+					System.out.println(new Parser().fitness(treeArray[index].root, ans));
 					Fittest = treeArray[index];
 					break outerLoop;
 				}
@@ -75,14 +75,14 @@ public class main {
 		}
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
-		long sec = TimeUnit.MILLISECONDS.toSeconds(totalTime);
+		int sec = (int)TimeUnit.MILLISECONDS.toSeconds(totalTime);
 		System.out.println("Number of seconds: " + sec);
 		
 		
 		if(Fittest != null){
 			ui u1 = new ui();
 			u1.setVisible(true);
-			u1.drawTree(Fittest.root, new Parser(0.0, 0.0));
+			u1.drawTree(Fittest.root, generation, sec);
 			System.out.println("This is the best Tree: " + printTree(Fittest) + "it has fitness of: " + Fittest.fitness);	
 		}
 		else{
@@ -107,7 +107,7 @@ public class main {
 		return fittest.toString();
 	}
 	private static Tree[] getFitness(Tree[] input, double[][] ans){
-		Parser p = new Parser(0.0, 0.0);
+		Parser p = new Parser();
 		for(int index = 0; index < input.length; index++){
 			input[index].fitness = p.fitness(input[index].root, ans);
 		}
@@ -133,7 +133,7 @@ public class main {
 			input[closestIndex].fitness = Double.MIN_VALUE;
 			countIndex++;	
 		}
-		leet[0].fitness = new Parser(0.0, 0.0).fitness(leet[0].root, ans);
+		leet[0].fitness = new Parser().fitness(leet[0].root, ans);
 		if(leet[0].fitness == 0.0){
 			System.out.println("0");
 		}
@@ -144,7 +144,7 @@ public class main {
 	private static void crossover(Tree[] elites) {
 		int r1, r2;
 		Tree[] CrossOverResult = null;
-		Parser p = new Parser(0.0, 0.0);
+		Parser p = new Parser();
 		for(int index = 0; index < eliteTrees.length; index++){//Our surviors
 			treeArray[index] = eliteTrees[index];
 		}
@@ -199,7 +199,7 @@ public class main {
 		for(int index = 0; index < treeArray.length; index++){
 			Mutated[index] = new Tree(GeneticOperations.copyTree(treeArray[index].root));
 		}
-		Parser p = new Parser(0.0, 0.0);
+		Parser p = new Parser();
 		for (int index = 0; index < Mutated.length; index++) {//mutate each of the elites
 			if (rand.nextDouble() <= 1.010) {// 100% get mutated
 				Mutated[index] = GeneticOperations.mutation(Mutated[index], rand.nextInt(treeDepth) + 2);
@@ -214,7 +214,7 @@ public class main {
 		Tree[] immigrated = new Tree[treeArray.length];
 		for (int index = 0; index < immigrated.length; index++) {
 			immigrated[index] = new Tree(treeDepth);//generate random trees
-			immigrated[index].fitness = new Parser(0.0, 0.0).fitness(immigrated[index].root, ans);
+			immigrated[index].fitness = new Parser().fitness(immigrated[index].root, ans);
 		}
 		return immigrated;
 	}

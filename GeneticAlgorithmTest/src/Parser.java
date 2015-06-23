@@ -5,10 +5,6 @@ import java.text.DecimalFormat;
 public class Parser {
 	double x = 0, y = 0;
 	static DecimalFormat df = new DecimalFormat("####.######;-####.######");
-	public Parser(double xin, Double yin){
-		x = xin;
-		y = yin;
-	}
 	public double Eval(Node input){
 		double operandA = 0;
 		double operandB = 0;
@@ -18,7 +14,7 @@ public class Parser {
 				return x;
 			}
 			else{
-				return y;
+				return Double.parseDouble(input.data);//return the number
 			}
 			 
 		}
@@ -80,7 +76,6 @@ public class Parser {
 		double evalTemp;
 		for(int index = 0; index < ans.length; index++){
 			x = (double)(ans[index][0]);
-			y = 0.0;//(double)(answerArray[index][1]);
 			//evaluation = Eval(root);
 			evalTemp = Double.valueOf(df.format(Eval(root)));
 			ansTemp = Double.valueOf(df.format(ans[index][1]));

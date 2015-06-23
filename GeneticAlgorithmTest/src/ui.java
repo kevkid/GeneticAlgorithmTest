@@ -9,6 +9,8 @@ public class ui extends JFrame {
     Node root;
     Parser p;
     double x = 5, y = 3;
+    int generation = 0;
+    int timeSeconds = 0;
     
     int sizeX = 1000;
     int sizeY = 700;
@@ -25,9 +27,11 @@ public class ui extends JFrame {
         add(tp);
         
     }
-public void drawTree(Node r, Parser par){
+public void drawTree(Node r, int gen, int timeSec){
 	root = r;
-	p = par;
+	p = new Parser();
+	generation = gen;
+	timeSeconds = timeSec;
 }
 
 
@@ -41,7 +45,8 @@ public void drawTree(Node r, Parser par){
             super.paintComponent(g);
             if(root != null){
             	Eval(root, g, sizeX/2, 100);
-            	g.drawString("This is the evaluation: " + p.Eval(root), 15, 100);
+            	g.drawString("Generation: " + generation, 15, 100);
+            	g.drawString("Time it took: " + timeSeconds + " seconds", 15, 120);
             }
             	
         }

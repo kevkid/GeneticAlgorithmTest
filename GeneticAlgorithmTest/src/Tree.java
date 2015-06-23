@@ -5,6 +5,7 @@ public class Tree {
 	int strIndex = 0;
 	static String doubleRegEx = "[\\x00-\\x20]*[+-]?(((((\\p{Digit}+)(\\.)?((\\p{Digit}+)?)([eE][+-]?(\\p{Digit}+))?)|(\\.((\\p{Digit}+))([eE][+-]?(\\p{Digit}+))?)|(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))[pP][+-]?(\\p{Digit}+)))[fFdD]?))[\\x00-\\x20]*";
 	String[] operators = {"+", "-", "*", "/", "sin", "cos", "tan", "sec", "csc", "cot", "log", "^2", "sqrt", "v" };
+	String[] terminalSet = {"0","1","2","3","4","5","6","7","8","9","x"};
 	String[] var = {"x", "y"};
 	int maxDepth;
 	int numberOfChildren;
@@ -63,7 +64,8 @@ public class Tree {
 		}
 		if (operator.equals("v")) {
 			leaf = true;
-			operator = "x";//var[new Random().nextInt(var.length)];
+			operator = terminalSet[new Random().nextInt(terminalSet.length)];//Choose any of the terminal set
+			//operator = "x";
 		}
 
 		if (depth > 0) {
