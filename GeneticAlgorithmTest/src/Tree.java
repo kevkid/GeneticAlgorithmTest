@@ -4,8 +4,8 @@ import java.util.Random;
 public class Tree {
 	int strIndex = 0;
 	static String doubleRegEx = "[\\x00-\\x20]*[+-]?(((((\\p{Digit}+)(\\.)?((\\p{Digit}+)?)([eE][+-]?(\\p{Digit}+))?)|(\\.((\\p{Digit}+))([eE][+-]?(\\p{Digit}+))?)|(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))[pP][+-]?(\\p{Digit}+)))[fFdD]?))[\\x00-\\x20]*";
-	String[] operators = {"+", "-", "*", "/", "sin", "cos", "tan", "sec", "csc", "cot", "log", "^2", "sqrt", "v" };
-	String[] terminalSet = {"0","1","2","3","4","5","6","7","8","9","x"};
+	String[] operators = {"+", "-", "*", "/", "sin", "cos", "tan", "sec", "csc", "cot", "log", "^2", "sqrt", "e^", "v" };
+	String[] terminalSet = {"n","d","x"};
 	String[] var = {"x", "y"};
 	int maxDepth;
 	int numberOfChildren;
@@ -54,7 +54,7 @@ public class Tree {
 		boolean firstNode = true;
 		if (depth > 1) {
 			if(firstNode){
-				operator = operators[new Random().nextInt(13)];//min tree depth of 2
+				operator = operators[new Random().nextInt(14)];//min tree depth of 2
 				firstNode = false;
 			}
 			else
@@ -65,7 +65,18 @@ public class Tree {
 		if (operator.equals("v")) {
 			leaf = true;
 			operator = terminalSet[new Random().nextInt(terminalSet.length)];//Choose any of the terminal set
-			//operator = "x";
+			Random r = new Random();
+			switch(operator){
+				case "n"://ints from -100 to 100
+					operator = String.valueOf(-100 + r.nextInt(200));
+					break;
+				case "d"://doubles from -100 to 100
+					operator = String.valueOf(-100 + (100 - -100) * r.nextDouble());
+					break;
+				case "x":
+					operator = "x";
+					break;
+			}
 		}
 
 		if (depth > 0) {

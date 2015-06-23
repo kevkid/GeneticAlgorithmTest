@@ -24,6 +24,8 @@ public class Utility {
 			return true;
 		case "sqrt":
 			return true;
+		case "e^":
+			return true;
 			}
 	return false;
 		}

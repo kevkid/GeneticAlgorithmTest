@@ -61,6 +61,9 @@ public class Parser {
 		case "sqrt":
 			result = Math.sqrt(operandA);
 			break;
+		case "e^":
+			result = Math.exp(operandA);
+			break;
 		}
 		
 		if(Double.isNaN(result)|| Double.isInfinite(result))//protected operation

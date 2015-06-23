@@ -10,7 +10,7 @@ public class main {
 	static Tree t = null;
 	static Node root = null;
 	static int width, height;
-	static Tree[] treeArray = new Tree[1000];
+	static Tree[] treeArray = new Tree[10000];
 	static Tree[] eliteTrees = null;
 	static Tree[] mutatedTrees = null;
 	static Tree[] immigrateTrees = null;
@@ -23,8 +23,8 @@ public class main {
 	static String prevTree = null;
 	static int prevTreeCount = 0;
 	static int mutationScaler = 1;
-	static int treeCountThreshold = 3;
-	static double[][] ans = {{-4, 96},{-3, 54},{-2, 24},{-1, 6},{0, 0},{1, 6},{2, 24},{3, 54},{4, 96}};//3x*2x
+	static int treeCountThreshold = 5;
+	static double[][] ans =  { { -2, 16 }, { -1, 1 }, { 0, 0 }, { 1, 1 }, { 2, 16 } };// x^4
 	//ans = {{-2, 4},{-1, 1},{0, 0},{1, 1},{2, 4}};// x^2
 	//ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	//ans = { { -2, 16 }, { -1, 1 }, { 0, 0 }, { 1, 1 }, { 2, 16 } };// x^4
@@ -37,9 +37,9 @@ public class main {
 	//ans = {{-4, 96},{-3, 54},{-2, 24},{-1, 6},{0, 0},{1, 6},{2, 24},{3, 54},{4, 96}};//3x*2x
 	// int[][] ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	public static void main(String[] args) {
-		//for(int i = -10; i <= 10; i++)
-		//	System.out.print("{" + i + ", " + (i*i) + "},");
-		//System.out.println("");
+		for(int i = -4; i <= 4; i++)
+			System.out.print("{" + i + ", " + (Math.pow(i, 2)+3*i+4) + "},");
+		System.out.println("");
 		long startTime = System.currentTimeMillis();
 		//Generate Random set of Trees
 		genRandomTrees(treeArray);//
@@ -140,9 +140,9 @@ public class main {
 		}
 		leet[0].fitness = new Parser().fitness(leet[0].root, ans);
 		if(printTree(leet[0]).equals(prevTree)){
-			if(prevTreeCount > treeCountThreshold){
+			if(prevTreeCount >= treeCountThreshold && mutationScaler*eliteTrees.length < (treeArray.length/2)){
 				mutationScaler++;
-				prevTreeCount = 0;//reset so we dont go crazy
+				prevTreeCount = 0;//reset so we don't go crazy
 			}
 			prevTreeCount++;
 		}
@@ -230,7 +230,7 @@ public class main {
 		
 	}
 	private static Tree[] immigrate(Tree[] treeArray, int immigrateScal){
-		Tree[] immigrated = new Tree[(treeArray.length*immigrateScal)/10];//1% of original population
+		Tree[] immigrated = new Tree[(treeArray.length*immigrateScal)/1];//1% of original population
 		for (int index = 0; index < immigrated.length; index++) {
 			immigrated[index] = new Tree(treeDepth);//generate random trees
 			immigrated[index].fitness = new Parser().fitness(immigrated[index].root, ans);

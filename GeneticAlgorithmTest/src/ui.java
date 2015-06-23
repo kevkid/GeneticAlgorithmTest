@@ -21,9 +21,8 @@ public class ui extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         tp = new TPanel();
-        JButton genButton = new JButton("Generate Tree");
-       
-        tp.add(genButton);
+        //JButton genButton = new JButton("Generate Tree");
+        //tp.add(genButton);
         add(tp);
         
     }
