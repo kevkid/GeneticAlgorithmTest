@@ -10,7 +10,7 @@ public class main {
 	static Tree t = null;
 	static Node root = null;
 	static int width, height;
-	static Tree[] treeArray = new Tree[10000];
+	static Tree[] treeArray = new Tree[1000];
 	static Tree[] eliteTrees = null;
 	static Tree[] mutatedTrees = null;
 	static Tree[] immigrateTrees = null;
@@ -18,9 +18,13 @@ public class main {
 	static Tree Fittest = null;
 	static int treeDepth = 10;
 	static double fitness = 0.0;
-	static int genLim = 1000;
+	static int genLim = 10000;
 	static Random rand = new Random();
-	static double[][] ans = {{-4, 17.0},{-3, 10.0},{-2, 5.0},{-1, 2.0},{0, 1.0},{1, 2.0},{2, 5.0},{3, 10.0},{4, 17.0}};//x^2+1
+	static String prevTree = null;
+	static int prevTreeCount = 0;
+	static int mutationScaler = 1;
+	static int treeCountThreshold = 3;
+	static double[][] ans = {{-4, 96},{-3, 54},{-2, 24},{-1, 6},{0, 0},{1, 6},{2, 24},{3, 54},{4, 96}};//3x*2x
 	//ans = {{-2, 4},{-1, 1},{0, 0},{1, 1},{2, 4}};// x^2
 	//ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	//ans = { { -2, 16 }, { -1, 1 }, { 0, 0 }, { 1, 1 }, { 2, 16 } };// x^4
@@ -33,8 +37,9 @@ public class main {
 	//ans = {{-4, 96},{-3, 54},{-2, 24},{-1, 6},{0, 0},{1, 6},{2, 24},{3, 54},{4, 96}};//3x*2x
 	// int[][] ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	public static void main(String[] args) {
-		for(int i = -4; i <= 4; i++)
-			System.out.println("{" + i + ", " + (Math.pow(i,2)+1) + "},");
+		//for(int i = -10; i <= 10; i++)
+		//	System.out.print("{" + i + ", " + (i*i) + "},");
+		//System.out.println("");
 		long startTime = System.currentTimeMillis();
 		//Generate Random set of Trees
 		genRandomTrees(treeArray);//
@@ -43,9 +48,9 @@ public class main {
 		//get elite trees
 		eliteTrees = getElite(treeArray, fitness);
 		//get mutations
-		mutatedTrees = mutate(eliteTrees);
+		mutatedTrees = mutate(eliteTrees, mutationScaler);
 		//get immigrants
-		immigrateTrees = immigrate(eliteTrees);//probably can just be an number
+		immigrateTrees = immigrate(eliteTrees, mutationScaler);//probably can just be an number
 		//create next generation to crossover
 		nextGenTrees = nextGen(eliteTrees, mutatedTrees, immigrateTrees);
 		//crossover
@@ -64,9 +69,9 @@ public class main {
 				}
 			}
 			eliteTrees = getElite(treeArray, fitness);//get elite trees
-			mutatedTrees = mutate(eliteTrees);//get immigrants
+			mutatedTrees = mutate(eliteTrees, mutationScaler);//get immigrants
 			
-			immigrateTrees = immigrate(eliteTrees);//probably can just be an number
+			immigrateTrees = immigrate(eliteTrees, mutationScaler);//probably can just be an number
 			
 			nextGenTrees = nextGen(eliteTrees, mutatedTrees, immigrateTrees);//create next generation to crossover
 			//Should go through mutation process and immigration process
@@ -134,9 +139,19 @@ public class main {
 			countIndex++;	
 		}
 		leet[0].fitness = new Parser().fitness(leet[0].root, ans);
-		if(leet[0].fitness == 0.0){
-			System.out.println("0");
+		if(printTree(leet[0]).equals(prevTree)){
+			if(prevTreeCount > treeCountThreshold){
+				mutationScaler++;
+				prevTreeCount = 0;//reset so we dont go crazy
+			}
+			prevTreeCount++;
 		}
+		else{
+			mutationScaler = 1;
+			prevTreeCount = 0;
+			//mutationScaler--;
+		}
+		prevTree = printTree(leet[0]);
 		System.out.println("This is the best fitness: " + leet[0].fitness + " This is the program: " + printTree(leet[0]) + " number of children: " + leet[0].numberOfChildren);
 		return leet;
 	}
@@ -194,24 +209,28 @@ public class main {
 		return result;			
 		}
 	
-	private static Tree[] mutate(Tree[] treeArray){
-		Tree[] Mutated = new Tree[treeArray.length];
-		for(int index = 0; index < treeArray.length; index++){
-			Mutated[index] = new Tree(GeneticOperations.copyTree(treeArray[index].root));
+	private static Tree[] mutate(Tree[] treeArray, int mutateScal){
+		Tree[] Mutated = new Tree[treeArray.length*mutateScal];
+		for(int outerIndex = 0; outerIndex < mutateScal; outerIndex++){
+			for(int index = 0; index < treeArray.length; index++){
+			Mutated[index+(treeArray.length*outerIndex)] = new Tree(GeneticOperations.copyTree(treeArray[index].root));
 		}
+		}
+		
 		Parser p = new Parser();
 		for (int index = 0; index < Mutated.length; index++) {//mutate each of the elites
-			if (rand.nextDouble() <= 1.010) {// 100% get mutated
+			if (rand.nextDouble() <= 1.10) {// 100% get mutated
 				Mutated[index] = GeneticOperations.mutation(Mutated[index], rand.nextInt(treeDepth) + 2);
 				Mutated[index].fitness = p.fitness(Mutated[index].root, ans);
 			//System.out.println("This is the Mutation: Fitness: " + Mutated[index].fitness + " This is the program: " + printTree(Mutated[index]));
 			}
 		}
+		System.out.println("Mutated Scaler = " + mutateScal);
 		return Mutated;
 		
 	}
-	private static Tree[] immigrate(Tree[] treeArray){
-		Tree[] immigrated = new Tree[treeArray.length];
+	private static Tree[] immigrate(Tree[] treeArray, int immigrateScal){
+		Tree[] immigrated = new Tree[(treeArray.length*immigrateScal)/10];//1% of original population
 		for (int index = 0; index < immigrated.length; index++) {
 			immigrated[index] = new Tree(treeDepth);//generate random trees
 			immigrated[index].fitness = new Parser().fitness(immigrated[index].root, ans);
