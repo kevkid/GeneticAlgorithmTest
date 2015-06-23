@@ -84,7 +84,7 @@ public class Parser {
 			//evaluation = Eval(root);
 			evalTemp = Double.valueOf(df.format(Eval(root)));
 			ansTemp = Double.valueOf(df.format(ans[index][1]));
-			result += evalTemp-ansTemp;//perfect score should be a difference of 0//Set up difference points system
+			result += Math.abs(evalTemp-ansTemp);//perfect score should be a difference of 0//Set up difference points system
 		}
 		
 		return result;
