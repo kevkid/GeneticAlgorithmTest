@@ -24,7 +24,8 @@ public class main {
 	static int prevTreeCount = 0;
 	static int mutationScaler = 1;
 	static int treeCountThreshold = 5;
-	static double[][] ans =  { { -2, 16 }, { -1, 1 }, { 0, 0 }, { 1, 1 }, { 2, 16 } };// x^4
+	static double[][] ans =  {{-10, 1.0E10},{-9, 3.486784401E9},{-8, 1.073741824E9},{-7, 2.82475249E8},{-6, 6.0466176E7},{-5, 9765625.0},{-4, 1048576.0},{-3, 59049.0},{-2, 1024.0},{-1, 1.0},{0, 0.0},{1, 1.0},{2, 1024.0},{3, 59049.0},{4, 1048576.0},{5, 9765625.0},{6, 6.0466176E7},{7, 2.82475249E8},{8, 1.073741824E9},{9, 3.486784401E9},{10, 1.0E10}};//x^10
+
 	//ans = {{-2, 4},{-1, 1},{0, 0},{1, 1},{2, 4}};// x^2
 	//ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	//ans = { { -2, 16 }, { -1, 1 }, { 0, 0 }, { 1, 1 }, { 2, 16 } };// x^4
@@ -37,8 +38,12 @@ public class main {
 	//ans = {{-4, 96},{-3, 54},{-2, 24},{-1, 6},{0, 0},{1, 6},{2, 24},{3, 54},{4, 96}};//3x*2x
 	// int[][] ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	public static void main(String[] args) {
-		for(int i = -4; i <= 4; i++)
-			System.out.print("{" + i + ", " + (Math.pow(i, 2)+3*i+4) + "},");
+		
+		ui u2 = new ui();
+		u2.setVisible(true);
+
+		for(int i = -10; i <= 10; i++)
+			System.out.print("{" + i + ", " + (Math.pow(i, 10)) + "},");
 		System.out.println("");
 		long startTime = System.currentTimeMillis();
 		//Generate Random set of Trees
@@ -77,6 +82,9 @@ public class main {
 			//Should go through mutation process and immigration process
 			System.out.println("Generation: " + generation);
 			generation++;
+			
+			u2.GraphTree(eliteTrees[0].root);
+
 		}
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
@@ -88,6 +96,7 @@ public class main {
 			ui u1 = new ui();
 			u1.setVisible(true);
 			u1.drawTree(Fittest.root, generation, sec);
+			u2.GraphTree(Fittest.root);
 			System.out.println("This is the best Tree: " + printTree(Fittest) + "it has fitness of: " + Fittest.fitness);	
 		}
 		else{

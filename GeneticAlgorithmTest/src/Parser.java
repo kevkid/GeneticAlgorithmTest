@@ -87,6 +87,10 @@ public class Parser {
 		
 		return result;
 	}
+	public double TreeOutputAtPoint(Node root, double xInput){
+		x = xInput;
+		return Eval(root);
+	}
 	public void setXY(int inX, int inY){
 		x = inX;
 		y = inY;

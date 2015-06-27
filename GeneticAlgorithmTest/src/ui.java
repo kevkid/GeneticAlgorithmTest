@@ -2,13 +2,17 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
-
+import org.jfree.chart.*;
+import org.jfree.chart.axis.Axis;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 public class ui extends JFrame {
     JPanel tp;
     Tree t;
     Node root;
     Parser p;
-    double x = 5, y = 3;
+    double x = 0, y = 0;
     int generation = 0;
     int timeSeconds = 0;
     
@@ -21,10 +25,31 @@ public class ui extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         tp = new TPanel();
+        tp.setLayout(new BorderLayout());
         //JButton genButton = new JButton("Generate Tree");
         //tp.add(genButton);
+        
         add(tp);
         
+    }
+    public ChartPanel GraphTree(Node n){
+    	XYSeries series = new XYSeries("Data");
+    	Parser p = new Parser();
+    	for(double index = -10; index < 10; index+=0.1){
+    		series.add(index, p.TreeOutputAtPoint(n,index));
+    	}
+    	JFreeChart jc = ChartFactory.createXYLineChart("Tree Graph", "Input", "Output",new XYSeriesCollection(series),
+    		PlotOrientation.VERTICAL, true, true, false);
+    	ChartPanel cp = new ChartPanel(jc);
+    	cp.setPreferredSize(new java.awt.Dimension(200, 500));
+    	cp.setVisible(true);
+    	cp.setDomainZoomable(true);
+    	cp.setRangeZoomable(true);
+    	//setContentPane(cp);
+    	tp.add(cp, BorderLayout.SOUTH);
+    	tp.validate();
+    	//tp.repaint();
+    	return cp;
     }
 public void drawTree(Node r, int gen, int timeSec){
 	root = r;
