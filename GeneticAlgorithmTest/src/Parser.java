@@ -1,7 +1,6 @@
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
-
 public class Parser {
 	double x = 0, y = 0;
 	static DecimalFormat df = new DecimalFormat("####.######;-####.######");
@@ -82,9 +81,9 @@ public class Parser {
 			//evaluation = Eval(root);
 			evalTemp = Double.valueOf(df.format(Eval(root)));
 			ansTemp = Double.valueOf(df.format(ans[index][1]));
-			result += Math.abs(evalTemp-ansTemp);//perfect score should be a difference of 0//Set up difference points system
+			result += Math.pow(evalTemp-ansTemp, 2);//sum of squares//perfect score should be a difference of 0//Set up difference points system
 		}
-		
+		//result = result/ans.length;
 		return result;
 	}
 	public double TreeOutputAtPoint(Node root, double xInput){

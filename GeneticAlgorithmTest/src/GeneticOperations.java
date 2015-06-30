@@ -27,6 +27,7 @@ public class GeneticOperations {
 		
 		point = cPoint2;
 		Node subtree2 = getSubtree(parent2.root);
+		
 		leafPercent = new Random().nextDouble();
 		if(leafPercent < 0.11){
 			while(subtree2.leaf){
@@ -67,9 +68,9 @@ public class GeneticOperations {
 		point = 0;
 		Tree[] results = {parent1, parent2};
 		
-		if(results[0].root.leaf || results[1].root.leaf){
+		/*if(results[0].root.leaf || results[1].root.leaf){
 		System.out.println("Leaf Detected after creating crossover");
-	}
+	}*/
 		
 		return results;
 	}

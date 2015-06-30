@@ -24,7 +24,9 @@ public class main {
 	static int prevTreeCount = 0;
 	static int mutationScaler = 1;
 	static int treeCountThreshold = 5;
-	static double[][] ans =  {{-10, 1.0E10},{-9, 3.486784401E9},{-8, 1.073741824E9},{-7, 2.82475249E8},{-6, 6.0466176E7},{-5, 9765625.0},{-4, 1048576.0},{-3, 59049.0},{-2, 1024.0},{-1, 1.0},{0, 0.0},{1, 1.0},{2, 1024.0},{3, 59049.0},{4, 1048576.0},{5, 9765625.0},{6, 6.0466176E7},{7, 2.82475249E8},{8, 1.073741824E9},{9, 3.486784401E9},{10, 1.0E10}};//x^10
+	static double[][] ans =  {
+		{-20, -8052.0},{-19, -6908.0},{-18, -5878.0},{-17, -4956.0},{-16, -4136.0},{-15, -3412.0},{-14, -2778.0},{-13, -2228.0},{-12, -1756.0},{-11, -1356.0},{-10, -1022.0},{-9, -748.0},{-8, -528.0},{-7, -356.0},{-6, -226.0},{-5, -132.0},{-4, -68.0},{-3, -28.0},{-2, -6.0},{-1, 4.0},{0, 8.0},{1, 12.0},{2, 22.0},{3, 44.0},{4, 84.0},{5, 148.0},{6, 242.0},{7, 372.0},{8, 544.0},{9, 764.0},{10, 1038.0},{11, 1372.0},{12, 1772.0},{13, 2244.0},{14, 2794.0},{15, 3428.0},{16, 4152.0},{17, 4972.0},{18, 5894.0},{19, 6924.0},{20, 8068.0}
+		};//x^2+2x+3
 
 	//ans = {{-2, 4},{-1, 1},{0, 0},{1, 1},{2, 4}};// x^2
 	//ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
@@ -39,12 +41,13 @@ public class main {
 	// int[][] ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	public static void main(String[] args) {
 		
-		ui u2 = new ui();
-		u2.setVisible(true);
-
-		for(int i = -10; i <= 10; i++)
-			System.out.print("{" + i + ", " + (Math.pow(i, 10)) + "},");
-		System.out.println("");
+		ui u1 = new ui();
+		u1.setVisible(true);
+		//double n = -4.0;
+		for(int i = -20; i <= 20; i++){
+			//n = i*0.25;
+			System.out.print("{" + i + ", " + (Math.pow(i, 3) + 3*i + 8) + "},");
+		}
 		long startTime = System.currentTimeMillis();
 		//Generate Random set of Trees
 		genRandomTrees(treeArray);//
@@ -82,9 +85,10 @@ public class main {
 			//Should go through mutation process and immigration process
 			System.out.println("Generation: " + generation);
 			generation++;
-			
-			u2.GraphTree(eliteTrees[0].root);
-
+			u1.repaint();
+			u1.drawTree(eliteTrees[0].root, generation,eliteTrees[0].fitness, (int)TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()-startTime));
+			u1.GraphTree(eliteTrees[0].root);
+			System.gc();
 		}
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
@@ -93,10 +97,8 @@ public class main {
 		
 		
 		if(Fittest != null){
-			ui u1 = new ui();
-			u1.setVisible(true);
-			u1.drawTree(Fittest.root, generation, sec);
-			u2.GraphTree(Fittest.root);
+			u1.drawTree(Fittest.root, generation,Fittest.fitness, sec);
+			u1.GraphTree(Fittest.root);
 			System.out.println("This is the best Tree: " + printTree(Fittest) + "it has fitness of: " + Fittest.fitness);	
 		}
 		else{
@@ -228,7 +230,7 @@ public class main {
 		
 		Parser p = new Parser();
 		for (int index = 0; index < Mutated.length; index++) {//mutate each of the elites
-			if (rand.nextDouble() <= 1.10) {// 100% get mutated
+			if (rand.nextDouble() <= 0.10) {// 100% get mutated
 				Mutated[index] = GeneticOperations.mutation(Mutated[index], rand.nextInt(treeDepth) + 2);
 				Mutated[index].fitness = p.fitness(Mutated[index].root, ans);
 			//System.out.println("This is the Mutation: Fitness: " + Mutated[index].fitness + " This is the program: " + printTree(Mutated[index]));
