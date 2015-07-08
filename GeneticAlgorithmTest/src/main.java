@@ -16,7 +16,7 @@ public class main {
 	static Tree[] immigrateTrees = null;
 	static Tree[] nextGenTrees = null;
 	static Tree Fittest = null;
-	static int treeDepth = 10;
+	static int treeDepth = 5;
 	static double fitness = 0.0;
 	static int genLim = 10000;
 	static Random rand = new Random();
@@ -24,6 +24,7 @@ public class main {
 	static int prevTreeCount = 0;
 	static int mutationScaler = 1;
 	static int treeCountThreshold = 5;
+	static double mutationPercent = 0.10;
 	static double[][] ans =  {
 		{-20, -8052.0},{-19, -6908.0},{-18, -5878.0},{-17, -4956.0},{-16, -4136.0},{-15, -3412.0},{-14, -2778.0},{-13, -2228.0},{-12, -1756.0},{-11, -1356.0},{-10, -1022.0},{-9, -748.0},{-8, -528.0},{-7, -356.0},{-6, -226.0},{-5, -132.0},{-4, -68.0},{-3, -28.0},{-2, -6.0},{-1, 4.0},{0, 8.0},{1, 12.0},{2, 22.0},{3, 44.0},{4, 84.0},{5, 148.0},{6, 242.0},{7, 372.0},{8, 544.0},{9, 764.0},{10, 1038.0},{11, 1372.0},{12, 1772.0},{13, 2244.0},{14, 2794.0},{15, 3428.0},{16, 4152.0},{17, 4972.0},{18, 5894.0},{19, 6924.0},{20, 8068.0}
 		};//x^2+2x+3
@@ -48,6 +49,7 @@ public class main {
 			//n = i*0.25;
 			System.out.print("{" + i + ", " + (Math.pow(i, 3) + 3*i + 8) + "},");
 		}
+		Node ansTree = Tree.build("+ + ^3 x * x 3 8".split(" "));
 		long startTime = System.currentTimeMillis();
 		//Generate Random set of Trees
 		genRandomTrees(treeArray);//
@@ -87,7 +89,7 @@ public class main {
 			generation++;
 			u1.repaint();
 			u1.drawTree(eliteTrees[0].root, generation,eliteTrees[0].fitness, (int)TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()-startTime));
-			u1.GraphTree(eliteTrees[0].root);
+			u1.GraphTree(eliteTrees[0].root, ansTree);
 			System.gc();
 		}
 		long endTime   = System.currentTimeMillis();
@@ -98,7 +100,7 @@ public class main {
 		
 		if(Fittest != null){
 			u1.drawTree(Fittest.root, generation,Fittest.fitness, sec);
-			u1.GraphTree(Fittest.root);
+			u1.GraphTree(Fittest.root, ansTree);
 			System.out.println("This is the best Tree: " + printTree(Fittest) + "it has fitness of: " + Fittest.fitness);	
 		}
 		else{
@@ -229,11 +231,23 @@ public class main {
 		}
 		
 		Parser p = new Parser();
+		double ran = rand.nextDouble();
 		for (int index = 0; index < Mutated.length; index++) {//mutate each of the elites
-			if (rand.nextDouble() <= 0.10) {// 100% get mutated
+			if (ran <= mutationPercent) {
+				if(ran < mutationPercent/2){
 				Mutated[index] = GeneticOperations.mutation(Mutated[index], rand.nextInt(treeDepth) + 2);
 				Mutated[index].fitness = p.fitness(Mutated[index].root, ans);
 			//System.out.println("This is the Mutation: Fitness: " + Mutated[index].fitness + " This is the program: " + printTree(Mutated[index]));
+			}
+			else if(ran >= mutationPercent/3 && ran <= mutationPercent*2/3) {
+				Mutated[index] = GeneticOperations.PointMutation(Mutated[index], rand.nextInt(treeDepth) + 2);
+				Mutated[index].fitness = p.fitness(Mutated[index].root, ans);
+			//System.out.println("This is the Mutation: Fitness: " + Mutated[index].fitness + " This is the program: " + printTree(Mutated[index]));
+			}
+			else if(ran >= mutationPercent*2/3){
+				Mutated[index] = GeneticOperations.RemovalMutation(Mutated[index], rand.nextInt(treeDepth) + 2);
+				Mutated[index].fitness = p.fitness(Mutated[index].root, ans);
+			}
 			}
 		}
 		System.out.println("Mutated Scaler = " + mutateScal);

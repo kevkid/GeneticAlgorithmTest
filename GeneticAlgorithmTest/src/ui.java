@@ -37,13 +37,14 @@ public class ui extends JFrame {
         add(chartPanel);
         
     }
-    public ChartPanel GraphTree(Node n){
+    public ChartPanel GraphTree(Node n, Node ansNode){
     	XYSeriesCollection dataSet = new XYSeriesCollection();
     	XYSeries series = new XYSeries("Data");
     	XYSeries actual = new XYSeries("Actual");
     	Parser p = new Parser();
     	for(double index = -10; index < 10; index+=0.1){
     		series.add(index, p.TreeOutputAtPoint(n,index));
+    		actual.add(index, p.TreeOutputAtPoint(ansNode, index));
     	}
     	dataSet.addSeries(series);
     	JFreeChart jc = ChartFactory.createXYLineChart("Tree Graph", "Input", "Output",dataSet,

@@ -2,7 +2,7 @@ import java.util.Random;
 
 
 public class Tree {
-	int strIndex = 0;
+	static int strIndex = 0;
 	static String doubleRegEx = "[\\x00-\\x20]*[+-]?(((((\\p{Digit}+)(\\.)?((\\p{Digit}+)?)([eE][+-]?(\\p{Digit}+))?)|(\\.((\\p{Digit}+))([eE][+-]?(\\p{Digit}+))?)|(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))[pP][+-]?(\\p{Digit}+)))[fFdD]?))[\\x00-\\x20]*";
 	String[] operators = {"+", "-", "*", "/", "sin", "cos", "tan", "sec", "csc", "cot", "log", "^2", "sqrt", "e^", "v" };
 	String[] terminalSet = {"n","d","x"};
@@ -97,29 +97,39 @@ public class Tree {
 	}
 
 	
-//	public Node build ( String[] input)
-//	   {
-//	      boolean  leaf;
-//	      String   value;
-//	      Node node;	      
-//
-//	      leaf = input[strIndex].matches(doubleRegEx);
-//	      if ( leaf )
-//	      {
-//	         value = input[strIndex];
-//	         strIndex++;
-//	         node = new Node ( leaf, value );
-//	      }
-//	      else
-//	      {
-//		     value = input[strIndex];
-//		     strIndex++;
-//	         node = new Node ( leaf, value );
-//	         node.left  = build ( input);
-//	         if(!Utility.isUnary(value))
-//	        	 node.right = build ( input);
-//	      }
-//	      return node;
-//	   }
+	public static Node build ( String[] input)
+	   {
+	      boolean  leaf;
+	      String   value;
+	      Node node;	      
+
+	      if(input[strIndex].matches(doubleRegEx)){
+	    	  leaf = true;
+	      }
+	      else if(input[strIndex].matches("^\\d+$")){
+	    	 leaf = true;
+	      }
+	      else if(input[strIndex].equals("x")){
+	    	  leaf = true;
+	      }
+	      else leaf = false;
+	      
+	      if ( leaf )
+	      {
+	         value = input[strIndex];
+	         strIndex++;
+	         node = new Node ( leaf, value );
+	      }
+	      else
+	      {
+		     value = input[strIndex];
+		     strIndex++;
+	         node = new Node ( leaf, value );
+	         node.left  = build ( input);
+	         if(!Utility.isUnary(value))
+	        	 node.right = build ( input);
+	      }
+	      return node;
+	   }
 
 }

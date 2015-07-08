@@ -80,7 +80,44 @@ public class GeneticOperations {
 			t = new Tree(depth);//Tree cannot be to large
 		}
 		else{
+			point = depth;
 			addSubtree(t.root, randomSubtree((depth)));//Tree cannot be to large
+			point = 0;
+			//addSubtree(t.root, randomSubtree(Tree.maxDepth(getSubtree(t.root))));
+		}
+		return t;
+	}
+	public static Tree PointMutation(Tree t, int depth){
+		point = depth;
+		Node sub = getSubtree(t.root);//get the sub tree
+		if(sub.leaf){//if its a leaf tree
+			sub.data = t.terminalSet[new Random().nextInt(t.terminalSet.length)];//replace the node
+			sub.leaf = true;
+		}
+		else{
+			point = depth;
+			int ran = new Random().nextInt(t.operators.length-1);
+			if(Utility.isUnary(sub.data)){
+				if(ran < 4) ran += 4;
+				sub.right = null;//remove the right side
+			}
+			sub.data = t.operators[ran];//replace the node
+			point = depth;
+			addSubtree(t.root, sub);//Tree cannot be to large
+			//addSubtree(t.root, randomSubtree(Tree.maxDepth(getSubtree(t.root))));
+		}
+		t.numberOfChildren = Tree.countChildren(t.root);
+		return t;
+	}
+	public static Tree RemovalMutation(Tree t, int depth){
+		//int cPoint = new Random().nextInt(t.numberOfChildren);
+		if(t.root.leaf){//if its a leaf tree
+			t.root.data = "0";//remove leaf node by making 0
+		}
+		else{
+			point = depth;
+			addSubtree(t.root, null);//Tree cannot be to large
+			point = 0;
 			//addSubtree(t.root, randomSubtree(Tree.maxDepth(getSubtree(t.root))));
 		}
 		return t;
