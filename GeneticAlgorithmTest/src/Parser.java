@@ -81,10 +81,10 @@ public class Parser {
 			//evaluation = Eval(root);
 			evalTemp = Double.valueOf(df.format(Eval(root)));
 			ansTemp = Double.valueOf(df.format(ans[index][1]));
-			result += Math.pow(evalTemp-ansTemp, 2);//sum of squares//perfect score should be a difference of 0//Set up difference points system
+			result += Math.abs(evalTemp-ansTemp);//abs//perfect score should be a difference of 0//Set up difference points system
 		}
 		//result = result/ans.length;
-		return result;
+		return result/ans.length;
 	}
 	public double TreeOutputAtPoint(Node root, double xInput){
 		x = xInput;

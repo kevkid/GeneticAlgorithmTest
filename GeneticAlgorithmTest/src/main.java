@@ -3,6 +3,8 @@ import java.util.Random;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.JOptionPane;
+
 
 
 
@@ -10,13 +12,14 @@ public class main {
 	static Tree t = null;
 	static Node root = null;
 	static int width, height;
-	static Tree[] treeArray = new Tree[10000];
+	static Parser p = new Parser();
+	static Tree[] treeArray = new Tree[5000];
 	static Tree[] eliteTrees = null;
 	static Tree[] mutatedTrees = null;
 	static Tree[] immigrateTrees = null;
 	static Tree[] nextGenTrees = null;
 	static Tree Fittest = null;
-	static int treeDepth = 5;
+	static int treeDepth = 10;
 	static double fitness = 0.0;
 	static int genLim = 10000;
 	static Random rand = new Random();
@@ -25,9 +28,11 @@ public class main {
 	static int mutationScaler = 1;
 	static int treeCountThreshold = 5;
 	static double mutationPercent = 0.10;
-	static double[][] ans =  {
-		{-20, -8052.0},{-19, -6908.0},{-18, -5878.0},{-17, -4956.0},{-16, -4136.0},{-15, -3412.0},{-14, -2778.0},{-13, -2228.0},{-12, -1756.0},{-11, -1356.0},{-10, -1022.0},{-9, -748.0},{-8, -528.0},{-7, -356.0},{-6, -226.0},{-5, -132.0},{-4, -68.0},{-3, -28.0},{-2, -6.0},{-1, 4.0},{0, 8.0},{1, 12.0},{2, 22.0},{3, 44.0},{4, 84.0},{5, 148.0},{6, 242.0},{7, 372.0},{8, 544.0},{9, 764.0},{10, 1038.0},{11, 1372.0},{12, 1772.0},{13, 2244.0},{14, 2794.0},{15, 3428.0},{16, 4152.0},{17, 4972.0},{18, 5894.0},{19, 6924.0},{20, 8068.0}
-		};//x^2+2x+3
+	static int numPoints = 100;
+	static double[][] ans = new double[numPoints][2];//-50 to 50
+//	static double[][] ans =  {
+//		{-50, -125142.0},{-49, -117788.0},{-48, -110728.0},{-47, -103956.0},{-46, -97466.0},{-45, -91252.0},{-44, -85308.0},{-43, -79628.0},{-42, -74206.0},{-41, -69036.0},{-40, -64112.0},{-39, -59428.0},{-38, -54978.0},{-37, -50756.0},{-36, -46756.0},{-35, -42972.0},{-34, -39398.0},{-33, -36028.0},{-32, -32856.0},{-31, -29876.0},{-30, -27082.0},{-29, -24468.0},{-28, -22028.0},{-27, -19756.0},{-26, -17646.0},{-25, -15692.0},{-24, -13888.0},{-23, -12228.0},{-22, -10706.0},{-21, -9316.0},{-20, -8052.0},{-19, -6908.0},{-18, -5878.0},{-17, -4956.0},{-16, -4136.0},{-15, -3412.0},{-14, -2778.0},{-13, -2228.0},{-12, -1756.0},{-11, -1356.0},{-10, -1022.0},{-9, -748.0},{-8, -528.0},{-7, -356.0},{-6, -226.0},{-5, -132.0},{-4, -68.0},{-3, -28.0},{-2, -6.0},{-1, 4.0},{0, 8.0},{1, 12.0},{2, 22.0},{3, 44.0},{4, 84.0},{5, 148.0},{6, 242.0},{7, 372.0},{8, 544.0},{9, 764.0},{10, 1038.0},{11, 1372.0},{12, 1772.0},{13, 2244.0},{14, 2794.0},{15, 3428.0},{16, 4152.0},{17, 4972.0},{18, 5894.0},{19, 6924.0},{20, 8068.0},{21, 9332.0},{22, 10722.0},{23, 12244.0},{24, 13904.0},{25, 15708.0},{26, 17662.0},{27, 19772.0},{28, 22044.0},{29, 24484.0},{30, 27098.0},{31, 29892.0},{32, 32872.0},{33, 36044.0},{34, 39414.0},{35, 42988.0},{36, 46772.0},{37, 50772.0},{38, 54994.0},{39, 59444.0},{40, 64128.0},{41, 69052.0},{42, 74222.0},{43, 79644.0},{44, 85324.0},{45, 91268.0},{46, 97482.0},{47, 103972.0},{48, 110744.0},{49, 117804.0},{50, 125158.0}
+//		};//x^2+2x+3
 
 	//ans = {{-2, 4},{-1, 1},{0, 0},{1, 1},{2, 4}};// x^2
 	//ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
@@ -41,15 +46,19 @@ public class main {
 	//ans = {{-4, 96},{-3, 54},{-2, 24},{-1, 6},{0, 0},{1, 6},{2, 24},{3, 54},{4, 96}};//3x*2x
 	// int[][] ans = {{-2, -8},{-1, -1},{0, 0},{1, 1},{2, 8}};//x^3
 	public static void main(String[] args) {
-		
 		ui u1 = new ui();
 		u1.setVisible(true);
 		//double n = -4.0;
-		for(int i = -20; i <= 20; i++){
-			//n = i*0.25;
-			System.out.print("{" + i + ", " + (Math.pow(i, 3) + 3*i + 8) + "},");
+		String input = JOptionPane.showInputDialog("Enter a function in Polish (prefix) notation","+ + * ^2 x x * x 3 8");
+		Node ansTree = Tree.build(input.split(" "));
+		double evaluation;
+		
+		for(int i = -numPoints/2; i < numPoints/2; i++){
+			p.x = i;
+			evaluation = p.Eval(ansTree);
+			System.out.print("{" + i + ", " + evaluation + "},");
+			ans[i+numPoints/2][0] = i; ans[i+numPoints/2][1] = evaluation; 
 		}
-		Node ansTree = Tree.build("+ + ^3 x * x 3 8".split(" "));
 		long startTime = System.currentTimeMillis();
 		//Generate Random set of Trees
 		genRandomTrees(treeArray);//
@@ -111,7 +120,7 @@ public class main {
 	}
 	private static void genRandomTrees(Tree[] input){
 		for(int index = 0; index < input.length; index++){
-			input[index] = new Tree(treeDepth);
+			input[index] = new Tree((index % (treeDepth-1))+2);
 		}
 	}
 	private static String printTree(Tree currentFittest){
@@ -234,18 +243,18 @@ public class main {
 		double ran = rand.nextDouble();
 		for (int index = 0; index < Mutated.length; index++) {//mutate each of the elites
 			if (ran <= mutationPercent) {
-				if(ran < mutationPercent/2){
-				Mutated[index] = GeneticOperations.mutation(Mutated[index], rand.nextInt(treeDepth) + 2);
+				if(ran < mutationPercent/6){
+				Mutated[index] = GeneticOperations.mutation(Mutated[index], rand.nextInt(rand.nextInt(Mutated[index].maxDepth) + 1));
 				Mutated[index].fitness = p.fitness(Mutated[index].root, ans);
 			//System.out.println("This is the Mutation: Fitness: " + Mutated[index].fitness + " This is the program: " + printTree(Mutated[index]));
 			}
-			else if(ran >= mutationPercent/3 && ran <= mutationPercent*2/3) {
-				Mutated[index] = GeneticOperations.PointMutation(Mutated[index], rand.nextInt(treeDepth) + 2);
+			else if(ran >= mutationPercent/6 && ran <= mutationPercent*3/6) {
+				Mutated[index] = GeneticOperations.PointMutation(Mutated[index], rand.nextInt(Mutated[index].maxDepth) + 1);
 				Mutated[index].fitness = p.fitness(Mutated[index].root, ans);
 			//System.out.println("This is the Mutation: Fitness: " + Mutated[index].fitness + " This is the program: " + printTree(Mutated[index]));
 			}
-			else if(ran >= mutationPercent*2/3){
-				Mutated[index] = GeneticOperations.RemovalMutation(Mutated[index], rand.nextInt(treeDepth) + 2);
+			else if(ran >= mutationPercent*3/6){
+				Mutated[index] = GeneticOperations.RemovalMutation(Mutated[index], rand.nextInt(rand.nextInt(Mutated[index].maxDepth) + 1));
 				Mutated[index].fitness = p.fitness(Mutated[index].root, ans);
 			}
 			}
@@ -255,9 +264,9 @@ public class main {
 		
 	}
 	private static Tree[] immigrate(Tree[] treeArray, int immigrateScal){
-		Tree[] immigrated = new Tree[(treeArray.length*immigrateScal)/1];//1% of original population
+		Tree[] immigrated = new Tree[(treeArray.length*immigrateScal)/10];//1% of original population
 		for (int index = 0; index < immigrated.length; index++) {
-			immigrated[index] = new Tree(treeDepth);//generate random trees
+			immigrated[index] = new Tree((index % (treeDepth-1))+2);//generate random trees
 			immigrated[index].fitness = new Parser().fitness(immigrated[index].root, ans);
 		}
 		return immigrated;

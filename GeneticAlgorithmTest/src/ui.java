@@ -39,24 +39,28 @@ public class ui extends JFrame {
     }
     public ChartPanel GraphTree(Node n, Node ansNode){
     	XYSeriesCollection dataSet = new XYSeriesCollection();
-    	XYSeries series = new XYSeries("Data");
+    	XYSeries series = new XYSeries("Approximation");
     	XYSeries actual = new XYSeries("Actual");
     	Parser p = new Parser();
-    	for(double index = -10; index < 10; index+=0.1){
+    	for(double index = -20; index < 20; index+=0.1){
     		series.add(index, p.TreeOutputAtPoint(n,index));
     		actual.add(index, p.TreeOutputAtPoint(ansNode, index));
     	}
     	dataSet.addSeries(series);
+    	dataSet.addSeries(actual);
     	JFreeChart jc = ChartFactory.createXYLineChart("Tree Graph", "Input", "Output",dataSet,
     		PlotOrientation.VERTICAL, true, true, false);
     	ChartPanel cp = new ChartPanel(jc);
     	cp.setPreferredSize(new java.awt.Dimension(200, 500));
     	cp.setVisible(true);
-
+    	cp.setMouseWheelEnabled(true);
+    	cp.setDomainZoomable(true);
+    	cp.setRangeZoomable(true);
     	chartPanel.add(cp, BorderLayout.SOUTH);
     	chartPanel.validate();
     	chartPanel.removeAll();
-    	chartPanel.revalidate();
+    	
+    	//chartPanel.revalidate();
     	//tp.repaint();
     	return cp;
     }
